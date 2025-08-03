@@ -1,0 +1,30 @@
+name: Deploy CDK Stack
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::299176305377:role/QA-DeveloperRole
+          aws-region: 
+
+      - name: Setup Python and CDK
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Deploy
+        run: |
+          source venv/bin/activate
+          cdk deploy --all --require-approval never
